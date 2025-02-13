@@ -2,6 +2,7 @@
   "name": "subscription-tracker",
   "version": "0.0.0",
   "private": true,
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon app.js"
