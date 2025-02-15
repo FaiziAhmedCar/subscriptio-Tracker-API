@@ -75,10 +75,18 @@ subscriptionSchema.pre("save", function(next){
         const renewalPeriod = {
             daily: 1,
             weekly: 7,
-            monthly: 1,
-            annually: 12,
+            monthly: 30,
+            annually: 365,
         };
         this.renewalDate = new Date(this.startDate);
-        this.renewalDate.setMonth(this.renewalDate.getMonth() + renewalPeriod[this.frequency]);
+        this.renewalDate.setDate(this.renewalDate.getDate() + renewalPeriod[this.frequency]);
     }
+    // auto update the status if the renewal date is in the past
+    if(this.renewalDate < new Date()){
+        this.status = "expired";
+    }
+    next();
 });
+
+const Subscription = mongoose.model("Subscription", subscriptionSchema);
+export default Subscription;
