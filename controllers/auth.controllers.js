@@ -7,8 +7,8 @@ config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
+// Implement sign-up logic
 export const signUp = async (req, res, next) => {
-    // Implement sign-up logic
 
     // this logic is known as Atomic Operation where operations are either fully completed or not at all
     const session = await mongoose.startSession();
@@ -16,8 +16,8 @@ export const signUp = async (req, res, next) => {
 
     try {
         // logic to create a new user
-        const {name, email, password} = req.body;
-
+        const { name, email, password } = req.body;
+        
         // check if the user already exists
         const existingUser = await User.findOne({email});
         if(existingUser){
@@ -28,8 +28,9 @@ export const signUp = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // create a new user
-        const newUsers= new User([{name, email, password: hashedPassword}], {session: session});
-        const token = jwt.sign({userId:newUsers._id},JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
+        const newUsers=  await User.create([{name, email, password : hashedPassword}], {session});
+        const token = jwt.sign({UserId:newUsers[0]._id},JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
+
         
         await session.commitTransaction();
         session.endSession();
@@ -40,7 +41,7 @@ export const signUp = async (req, res, next) => {
             message: 'User created successfully',
             data: {
             token,
-            user: newUsers[0]
+            User: newUsers[0],
         }
         });
 
@@ -53,10 +54,39 @@ export const signUp = async (req, res, next) => {
     }
 }
 
+// Implement sign-in logic
 export const signIn = async (req, res, next) => {
-    // Implement sign-in logic
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(404).json({message: 'User not found OR email is incorrect'});
+        }
+
+        // compare the password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if(!isPasswordValid){
+            return res.status(401).json({message: 'Invalid password'});
+        }
+
+        // create a token if the password is valid
+        const token = jwt.sign({UserId:user._id},JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
+        res.status(200).json({
+            success: true,
+            message: 'User signed in successfully',
+            data: {
+                token,
+                User: user,
+            }
+        });
+
+
+    } catch (error) {
+        next(error);
+    }
 }
 
+// Implement sign-out logic
 export const signOut = async (req, res, next) => {
-    // Implement sign-out logic
 }

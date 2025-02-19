@@ -7,12 +7,16 @@ import userRouter from './routes/user.routes.js';
 import connectDB from './database/mongodb.js';
 import errorMiddleware from './middleware/error.middleware.js';
 import cookieParser from 'cookie-parser';
+import arcjetMiddleware from './middleware/arcjet.middleware.js';
 
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// use Arcjet middleware
+app.use(arcjetMiddleware);
 
 const Port = process.env.PORT;
 
@@ -35,3 +39,5 @@ app.listen(Port, async () => {
     // connect to the database
     await connectDB();
 });
+
+export default app;
