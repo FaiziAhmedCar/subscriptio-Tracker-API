@@ -2,7 +2,7 @@ import {config} from 'dotenv';
 config();
 const ARCJET_KEY = process.env.ARCJET_KEY;
 
-import arcjet, { shield, detectBot, tokenBucket } from "arcjet";
+import arcjet, { shield, detectBot, tokenBucket } from "@arcjet/node";
 
 const aj =  arcjet({
     // Get your site key from https://app.arcjet.com and set it as an environment

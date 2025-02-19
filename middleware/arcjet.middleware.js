@@ -2,7 +2,7 @@ import aj from "../config/arcjet.js";
 
 const arcjetMiddleware = async (req, res, next) => {
     try {
-        const decision = await aj.evaluate(req);
+        const decision = await aj.evaluate(req,{requested:1});
         if(decision.isDenied()){
             if(decision.reason.isRateLimit()){return res.status(429).json({error: "Too many requests"});}
             if(decision.reason.isBot()){return res.status(403).json({error: "Bots are not allowed"});}
