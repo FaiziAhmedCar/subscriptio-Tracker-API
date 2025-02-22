@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
-import { name } from './../node_modules/eslint/lib/rules/utils/ast-utils';
-import { validate } from './../node_modules/@types/json-schema/index.d';
 
 const subscriptionSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "User is required"],
+        index: true,
+    },
     name: {
         type: String,
         required: [true, "Name is required"],
@@ -17,31 +21,31 @@ const subscriptionSchema = new mongoose.Schema({
     },
     currency: {
         type: String,
-        required: [true, "Currency is required"],
-        enum: ["USD", "EUR", "GBP", "RUPEES", "YUAN", "YEN", "FRANC", "PESO", "REAL", "RUBLE", "LIRA", "POUND", "DOLLAR", "EURO", "YUAN", "YEN", "FRANC", "PESO", "REAL", "RUBLE", "LIRA", "POUND"],
-        default: "RUPEES",
+        required: [true, "Currency is required  chose from the following: USD, EUR, GBP, INR, YUAN, YEN, FRANC, PESO, REAL, RUBLE, LIRA, POUND, DOLLAR, EURO, YUAN, YEN, FRANC, PESO, REAL, RUBLE, LIRA, POUND"],
+        enum: ["USD", "EUR", "GBP", "INR", "YUAN", "YEN", "FRANC", "PESO", "REAL", "RUBLE", "LIRA", "POUND", "DOLLAR", "EURO", "YUAN", "YEN", "FRANC", "PESO", "REAL", "RUBLE", "LIRA", "POUND"],
+        default: "INR",
     },
     frequency: {
         type: String,
-        required: [true, "Frequency is required"],
+        required: [true, "Frequency is required chose from the following: daily, weekly, monthly, annually"],
         enum: ["daily", "weekly", "monthly", "annually"],
         default: "monthly",
     },
     category: {
       type: String,
-        required: [true, "Category is required"],
+        required: [true, "Category is required  chose from the following: food, clothing, electronics, books, other, sports, news, entertainment, education, health, fitness, other"],
         enum: ["food", "clothing", "electronics", "books", "other", "sports", "news", "entertainment", "education", "health", "fitness", "other"],
         default: "other",  
     },
     paymentMethod: {
         type: String,
-        required: [true, "Payment method is required"],
+        required: [true, "Payment method is required  choose from the following: credit card, debit card, paypal, other"],
         enum: ["credit card", "debit card", "paypal", "other"],
         default: "credit card",
     },
     status: {
         type: String,
-        required: [true, "Status is required"],
+        required: [true, "Status is required   choose from the following: active, canceled, trial, pending"],
         enum: ["active", "canceled", "trial", "pending"],
         default: "pending",
     },
@@ -60,12 +64,6 @@ const subscriptionSchema = new mongoose.Schema({
             validator:(value)=> value > this.startDate,
         },
         message: "Renewal date must be after start date",
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: [true, "User is required"],
-        index: true,
     },
 }, {timestamps: true});
 
@@ -88,5 +86,5 @@ subscriptionSchema.pre("save", function(next){
     next();
 });
 
-const Subscription = mongoose.model("Subscription", subscriptionSchema);
+export const Subscription = mongoose.model("Subscription", subscriptionSchema);
 export default Subscription;

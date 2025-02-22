@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from './../models/user.model.js';
+import {User} from './../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {config} from 'dotenv';
@@ -17,6 +17,19 @@ export const signUp = async (req, res, next) => {
     try {
         // logic to create a new user
         const { name, email, password } = req.body;
+
+        // if(!name || !email || !password){
+        //     return res.status(400).json({message: 'All fields are required'});
+        // }
+        if(!name){
+            return res.status(400).json({message: 'Name is required'});
+        }
+        if(!email){
+            return res.status(400).json({message: 'Email is required'});
+        }
+        if(!password){
+            return res.status(400).json({message: 'Password is required'});
+        }
         
         // check if the user already exists
         const existingUser = await User.findOne({email});
@@ -29,7 +42,7 @@ export const signUp = async (req, res, next) => {
 
         // create a new user
         const newUsers=  await User.create([{name, email, password : hashedPassword}], {session});
-        const token = jwt.sign({UserId:newUsers[0]._id},JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
+        const token = jwt.sign({userId:newUsers[0]._id},JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
 
         
         await session.commitTransaction();
@@ -41,7 +54,7 @@ export const signUp = async (req, res, next) => {
             message: 'User created successfully',
             data: {
             token,
-            User: newUsers[0],
+            user: newUsers[0],
         }
         });
 
@@ -77,7 +90,7 @@ export const signIn = async (req, res, next) => {
             message: 'User signed in successfully',
             data: {
                 token,
-                User: user,
+                user: user,
             }
         });
 
@@ -89,4 +102,5 @@ export const signIn = async (req, res, next) => {
 
 // Implement sign-out logic
 export const signOut = async (req, res, next) => {
+    
 }

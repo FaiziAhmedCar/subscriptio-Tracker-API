@@ -1,7 +1,8 @@
 import {config} from 'dotenv';
 config();
 import jwt from 'jsonwebtoken';
-import User from '../models/user.model.js';
+import {User} from '../models/user.model.js';
+
 const authorize = async (req, res, next) => {
     
     try {
