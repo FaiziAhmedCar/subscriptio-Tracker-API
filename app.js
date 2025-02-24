@@ -8,6 +8,7 @@ import connectDB from './database/mongodb.js';
 import errorMiddleware from './middleware/error.middleware.js';
 import cookieParser from 'cookie-parser';
 import arcjetMiddleware from './middleware/arcjet.middleware.js';
+import WorkflowRouter from './routes/workflow.routes.js';
 
 
 const app = express();
@@ -23,6 +24,7 @@ const Port = process.env.PORT;
 app.use('/api/v1/auth', authRouter);          // http://localhost:3000/api/v1/auth   with /sign-up, /sign-in, /sign-out
 app.use('/api/v1/subscriptions', subscriptionRouter);   // http://localhost:3000/api/v1/subscriptions with /, /:id
 app.use('/api/v1/users', userRouter);   // http://localhost:3000/api/v1/users with /, /:id
+app.use('/api/v1/workflows', WorkflowRouter); // http://localhost:3000/api/v1/workflows with /
 
 // error middleware implementation
 app.use(errorMiddleware);
